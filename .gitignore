@@ -1,0 +1,6 @@
+node_modules
+dist
+.DS_Store
+dev-server.log
+static-server.log
+static-server.err
