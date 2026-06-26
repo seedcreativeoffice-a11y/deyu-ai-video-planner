@@ -69,6 +69,8 @@ jobs:
             fs.writeFileSync(file, next);
           }
 
+          fs.mkdirSync('dist/s/ai-video-planner', { recursive: true });
+          fs.copyFileSync('dist/index.html', 'dist/s/ai-video-planner/index.html');
           fs.copyFileSync('dist/index.html', 'dist/404.html');
           NODE
 
