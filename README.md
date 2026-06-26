@@ -22,23 +22,23 @@
 - PDF／Word 解析為基本文字讀取，掃描檔或複雜格式建議改貼文字
 - 尚未提供會員、雲端專案、多版本比較或正式檔案匯出
 
-## 本機執行
+## 本機執行正式網頁版
 
 ```bash
 npm install
-npm.cmd run dev
+npx vite --host 127.0.0.1 web
 ```
 
 開啟：
 
 ```text
-http://localhost:5173/s/ai-video-planner
+http://127.0.0.1:5173/
 ```
 
 ## 建置
 
 ```bash
-npm.cmd run build
+npx vite build web --base /deyu-ai-video-planner/ --outDir ../dist --emptyOutDir
 ```
 
 ## GitHub Pages 部署
@@ -51,8 +51,8 @@ npm.cmd run build
 
 推送到 `master` 或 `main` 後，GitHub Actions 會自動建置並部署到 GitHub Pages。
 
-部署完成後，公開網址通常會是：
+部署完成後，公開網址是：
 
 ```text
-https://<github-account>.github.io/<repo-name>/s/ai-video-planner
+https://seedcreativeoffice-a11y.github.io/deyu-ai-video-planner/
 ```

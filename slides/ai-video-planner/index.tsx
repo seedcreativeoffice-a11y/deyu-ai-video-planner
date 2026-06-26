@@ -172,7 +172,7 @@ const steps: { id: StepId; label: string }[] = [
   { id: 'recap', label: '開始實作' },
 ];
 
-const App: Page = () => {
+export const App: Page = () => {
   const [step, setStep] = useState<StepId>('problems');
   const [data, setData] = useState<PlannerState>(initialState);
   const [copied, setCopied] = useState('');
