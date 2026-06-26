@@ -30,6 +30,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Patch Open Slide basename for GitHub Pages
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const repo = process.env.GITHUB_REPOSITORY.split('/')[1];
+          const file = 'node_modules/@open-slide/core/src/app/app.tsx';
+          const source = fs.readFileSync(file, 'utf8');
+          fs.writeFileSync(
+            file,
+            source.replace('<BrowserRouter>', `<BrowserRouter basename="/${repo}">`)
+          );
+          NODE
+
       - name: Build
         run: npm run build
 
