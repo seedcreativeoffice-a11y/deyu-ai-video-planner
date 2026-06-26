@@ -106,6 +106,19 @@ const styles = `
   @media (prefers-reduced-motion: reduce) {
     .aivp-panel { animation: none; }
   }
+  @media (max-width: 760px) {
+    .aivp-panel {
+      grid-template-columns: 1fr !important;
+      height: auto !important;
+      align-content: start;
+    }
+    .aivp-panel > * {
+      min-width: 0;
+    }
+    .aivp-panel img {
+      max-width: 100%;
+    }
+  }
 `;
 
 type StepId = 'problems' | 'home' | 'basics' | 'material' | 'review' | 'audience' | 'strategy' | 'highlights' | 'style' | 'output' | 'result' | 'recap';
@@ -172,10 +185,28 @@ const steps: { id: StepId; label: string }[] = [
   { id: 'recap', label: '開始實作' },
 ];
 
+const useMobileLayout = () => {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 760);
+
+  useEffect(() => {
+    const update = () => setIsMobile(window.innerWidth <= 760);
+    update();
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
+    };
+  }, []);
+
+  return isMobile;
+};
+
 export const App: Page = () => {
   const [step, setStep] = useState<StepId>('problems');
   const [data, setData] = useState<PlannerState>(initialState);
   const [copied, setCopied] = useState('');
+  const isMobileLayout = useMobileLayout();
 
   useEffect(() => {
     try {
@@ -280,7 +311,7 @@ export const App: Page = () => {
       {step !== 'problems' && step !== 'home' && <TopBar currentIndex={currentIndex} step={step} copied={copied} onHome={() => setStep('problems')} />}
 
       {step === 'problems' && <ProblemsIntro onNext={() => setStep('home')} />}
-      {step === 'home' && <Home onStart={() => setStep('basics')} result={result} copied={copied} onCopy={() => copyText('首頁範例', result.brief)} />}
+      {step === 'home' && <Home onStart={() => setStep('basics')} result={result} copied={copied} onCopy={() => copyText('首頁範例', result.brief)} isMobile={isMobileLayout} />}
       {step === 'basics' && <Basics data={data} update={update} />}
       {step === 'material' && <Material data={data} update={update} handleFile={handleFile} summary={summary} />}
       {step === 'review' && <MaterialReview data={data} update={update} />}
@@ -301,38 +332,45 @@ export const App: Page = () => {
   );
 };
 
-const Home = ({ onStart, result, copied, onCopy }: { onStart: () => void; result: ReturnType<typeof buildResult>; copied: string; onCopy: () => void }) => (
-  <div style={{ display: 'grid', gridTemplateColumns: '1.02fr 0.98fr', gap: 44, height: '100%' }}>
-    <section className="aivp-panel" style={{ ...card, padding: '48px 52px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+const Home = ({ onStart, result, copied, onCopy, isMobile }: { onStart: () => void; result: ReturnType<typeof buildResult>; copied: string; onCopy: () => void; isMobile: boolean }) => (
+  <div
+    style={{
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1.02fr 0.98fr',
+      gap: isMobile ? 22 : 44,
+      height: isMobile ? 'auto' : '100%',
+    }}
+  >
+    <section className="aivp-panel" style={{ ...card, padding: isMobile ? '30px 30px 34px' : '48px 52px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <div>
         <Badge>AI 影像創作引導室</Badge>
-        <h1 style={{ fontFamily: font.display, fontSize: 64, lineHeight: 1.1, margin: '24px 0 18px' }}>
+        <h1 style={{ fontFamily: font.display, fontSize: isMobile ? 48 : 64, lineHeight: 1.12, margin: isMobile ? '20px 0 14px' : '24px 0 18px' }}>
           天馬行空，<br />
           用 AI 導航。
         </h1>
-        <p style={{ fontSize: 26, lineHeight: 1.55, color: palette.muted, margin: 0, maxWidth: 820 }}>
+        <p style={{ fontSize: isMobile ? 22 : 26, lineHeight: 1.55, color: palette.muted, margin: 0, maxWidth: 820 }}>
           這個工作流會先建立整體想像，再把影片拆成可執行的分鏡與提示詞。完成後，你可以帶走一套觀念、一份企劃，以及一組可用於生圖與生影片的提示詞。
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginTop: 26 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr', gap: 12, marginTop: isMobile ? 22 : 26 }}>
           <TakeawayCard title="一套觀念" body="先想清楚對象、目的與影片主軸。" />
           <TakeawayCard title="一份企劃" body="完成摘要、影片結構與分鏡腳本。" />
           <TakeawayCard title="一組提示詞" body="產出生圖與生影片可用的文字。" />
         </div>
-        <div style={{ display: 'flex', gap: 18, marginTop: 28 }}>
+        <div style={{ display: 'flex', gap: 18, marginTop: isMobile ? 24 : 28 }}>
           <Button label="開始建立影片企劃" onClick={onStart} kind="primary" />
         </div>
       </div>
     </section>
-    <section className="aivp-panel" style={{ ...darkPanel, display: 'grid', gridTemplateRows: '330px auto 1fr', gap: 18 }}>
+    <section className="aivp-panel" style={{ ...darkPanel, display: 'grid', gridTemplateRows: isMobile ? '260px auto 1fr' : '330px auto 1fr', gap: isMobile ? 14 : 18, padding: isMobile ? 26 : 30 }}>
       <img src={homeWorkflowImage} alt="大學影像企劃工作流示意" style={heroImage} />
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 14 }}>
         <div>
-          <div style={{ fontSize: 19, color: '#b9d3ff' }}>成果預覽</div>
-          <div style={{ fontSize: 30, fontWeight: 850, marginTop: 5 }}>德育護理健康學院護理系</div>
+          <div style={{ fontSize: isMobile ? 17 : 19, color: '#b9d3ff' }}>成果預覽</div>
+          <div style={{ fontSize: isMobile ? 25 : 30, fontWeight: 850, marginTop: 5, lineHeight: 1.18 }}>德育護理健康學院護理系</div>
         </div>
         <button className="aivp-focus" onClick={onCopy} style={smallDarkButton}>{copied === '首頁範例' ? '已複製' : '複製範例'}</button>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? 10 : 14 }}>
         <PreviewCard title="企劃主軸" body={result.brief.slice(0, 90)} dark />
         <PreviewCard title="第一鏡頭" body={result.shots[0].visual} dark />
         <PreviewCard title="工作流觀念" body="先定方向，再拆段落，最後才生成每一個畫面。" dark />

@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { App } from '../slides/ai-video-planner';
 
 const DESKTOP_CANVAS = { width: 1920, height: 1080 };
-const MOBILE_CANVAS = { width: 720, height: 1080 };
+const MOBILE_CANVAS = { width: 720, height: 1700 };
 const MOBILE_BREAKPOINT = 760;
 
 const getViewport = () => ({
